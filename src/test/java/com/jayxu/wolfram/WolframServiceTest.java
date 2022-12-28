@@ -22,10 +22,17 @@ class WolframServiceTest {
                 try {
                     System.out
                         .println(q + ": " + service.query(q).execute().body()
-                            .extractPrimaryResult());
+                            .extractRawResult());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
+    }
+
+    @Test
+    void testMultipalQuery() throws Exception {
+        WolframService.init().query("fibonacci(200)").execute().body()
+            .extractAllResults()
+            .forEach((k, v) -> System.out.println(k + ": " + v));
     }
 }

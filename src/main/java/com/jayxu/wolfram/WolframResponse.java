@@ -3,7 +3,9 @@
  */
 package com.jayxu.wolfram;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import lombok.Data;
@@ -573,6 +575,7 @@ import lombok.Data;
  */
 @Data
 public class WolframResponse {
+    private static final String INPUT = "Input";
     private QueryResult queryresult;
 
     @Data
@@ -640,12 +643,25 @@ public class WolframResponse {
     }
 
     public <T> T extractPrimaryResult(Function<String, T> mapper) {
-        return this.getQueryresult().getPods().stream().filter(Pod::isPrimary)
-            .findFirst().map(Pod::getSubpods).get().stream().findFirst()
+        return this.queryresult.pods.stream().filter(Pod::isPrimary).findFirst()
+            .map(Pod::getSubpods).get().stream().findFirst()
             .map(Pod::getPlaintext).map(mapper).get();
     }
 
-    public String extractPrimaryResult() {
+    public String extractRawResult() {
         return this.extractPrimaryResult(o -> o);
+    }
+
+    public Map<String, String> extractAllResults() {
+        var results = new HashMap<String, String>(this.queryresult.numpods);
+
+        this.queryresult.pods.stream().filter(p -> !INPUT.equals(p.title))
+            .forEach(pod -> {
+                for (var sub : pod.subpods) {
+                    results.put(pod.title, sub.plaintext);
+                }
+            });
+
+        return results;
     }
 }
