@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
+        <version>3.5.0</version>
     </parent>
     <name>Java REST client for Worlfram</name>
     <url>https://github.com/mustangxu/wolfram-client</url>
